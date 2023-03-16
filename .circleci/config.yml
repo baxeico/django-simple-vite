@@ -1,0 +1,23 @@
+version: 2.1
+orbs:
+  python: circleci/python@2.0.3
+jobs:
+  pypi_publish:
+    executor: python/default
+    steps:
+      - checkout
+      - python/install-packages:
+          args: twine
+          pkg-manager: pipenv
+      - run:
+          command: |  # create whl, install twine and publish to PyPI
+            python setup.py sdist bdist_wheel
+            pipenv run twine upload dist/*
+workflows:
+  main:
+    jobs:
+      - pypi_publish:
+          filters:
+            branches:
+              only:
+                - master
