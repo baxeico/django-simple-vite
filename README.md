@@ -126,4 +126,40 @@ Create a Django template `index.html` that will hold the HTML markup used by you
 </html>
 ```
 
-Now create a Django URLConf that will serve the above template, and you'll see a basic Vite.js powered web app, with Hot Module Replacement (HMR) enabled!
+Now create a view in your frontend app that will serve the template above:
+
+```
+from django.views.generic import TemplateView
+
+class ViteView(TemplateView):
+    template_name = 'frontend/index.html'
+```
+
+Now mount the view in a URLConf for the app. Create a `urls.py` file in your `frontend` app directory with this content:
+
+```
+from django.urls import path
+
+from . import views
+
+app_name = 'frontend'
+urlpatterns = [
+    path('', views.ViteView.as_view(), name='home'),
+]
+```
+
+And finally include the `frontend` URLconf in your main project urls:
+
+```
+from django.urls import path
+from django.conf.urls import include
+from django.contrib import admin
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('frontend.urls')),
+]
+```
+
+Now, if you visit the root of your Django webapp (usually on http://localhost:8000), you'll see a basic Vite.js powered web app.
+Keep your Vite.js server running (see `yarn dev` above), and you'll have Hot Module Replacement (HMR) enabled!
